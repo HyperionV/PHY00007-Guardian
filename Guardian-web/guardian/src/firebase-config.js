@@ -10,12 +10,13 @@ import { getAuth } from "firebase/auth";
 const firebaseConfig = {
   apiKey: "AIzaSyA0ka2Ni_oNRLUuv-zP5jUt4AVACOYYX8g",
   authDomain: "phy00007-guardian.firebaseapp.com",
-  databaseURL: "https://phy00007-guardian-default-rtdb.asia-southeast1.firebasedatabase.app",
+  databaseURL:
+    "https://phy00007-guardian-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "phy00007-guardian",
   storageBucket: "phy00007-guardian.firebasestorage.app",
   messagingSenderId: "152257878784",
   appId: "1:152257878784:web:6ac321ca0a6862e0f971e5",
-  measurementId: "G-08HXJS72Z2"
+  measurementId: "G-08HXJS72Z2",
 };
 
 // Initialize Firebase

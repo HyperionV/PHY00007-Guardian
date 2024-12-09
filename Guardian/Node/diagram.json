@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "author": "YourName",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-arduino-mega",
+      "id": "mega",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "id": "serial",
+      "type": "wokwi-serial-port",
+      "attrs": {
+        "baud": "9600"
+      }
+    }
+  ],
+  "connections": [
+    ["mega:1", "serial:RX", "", []],
+    ["mega:0", "serial:TX", "", []]
+  ],
+  "dependencies": {}
+}
