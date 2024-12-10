@@ -19,6 +19,10 @@ export function LoginForm({ className, ...props }) {
 
   const onLogin = (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
     signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
         // Signed in

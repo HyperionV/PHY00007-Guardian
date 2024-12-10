@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { useNavigate } from "react-router-dom"
 import {  createUserWithEmailAndPassword  } from 'firebase/auth';
 import { auth } from '../firebase-config';
+import { set } from "firebase/database"
 
 
 export function UserAuthForm({ className, ...props }) {
@@ -25,11 +26,14 @@ export function UserAuthForm({ className, ...props }) {
       alert("Mật khẩu không khớp")
       return
     }
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
     await createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log(user);
           navigate("/login")
           // ...
       })
