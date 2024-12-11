@@ -1,30 +1,28 @@
-"use client"
+"use client";
 
 import * as React from "react"
 
-import { cn } from "@/lib/utils"
-import { Icons } from "@/components/icons"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useNavigate } from "react-router-dom"
-import {  createUserWithEmailAndPassword  } from 'firebase/auth';
-import { auth } from '../firebase-config';
-import { set } from "firebase/database"
-
+import { cn } from "@/lib/utils";
+import { Icons } from "@/components/icons";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useNavigate } from "react-router-dom";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebase-config";
 
 export function UserAuthForm({ className, ...props }) {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [email, setEmail] = React.useState('')
-  const [password, setPassword] = React.useState('');
-  const [confirmPassword, setConfirmPassword] = React.useState('');
-  const navigate = useNavigate()
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
+  const navigate = useNavigate();
 
   const onSubmit = async (e) => {
-    e.preventDefault()
-    if(password !== confirmPassword){
-      alert("Mật khẩu không khớp")
-      return
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      alert("Mật khẩu không khớp");
+      return;
     }
     setIsLoading(true);
     setTimeout(() => {
@@ -32,29 +30,26 @@ export function UserAuthForm({ className, ...props }) {
     }, 1000);
     await createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-          // Signed in
-          const user = userCredential.user;
-          navigate("/login")
-          // ...
+        // Signed in
+        const user = userCredential.user;
+        console.log(user);
+        navigate("/login");
+        // ...
       })
       .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(errorCode, errorMessage);
-          // ..
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode, errorMessage);
+        // ..
       });
-
-
-  }
+  };
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-1">
-            <Label  htmlFor="email">
-              Email đăng nhập
-            </Label>
+            <Label htmlFor="email">Email đăng nhập</Label>
             <Input
               id="email"
               placeholder="name@example.com"
@@ -67,9 +62,7 @@ export function UserAuthForm({ className, ...props }) {
             />
           </div>
           <div className="grid gap-1 pt-3">
-            <Label  htmlFor="password">
-              Mật khẩu
-            </Label>
+            <Label htmlFor="password">Mật khẩu</Label>
             <Input
               id="password"
               placeholder="password..."
@@ -82,9 +75,7 @@ export function UserAuthForm({ className, ...props }) {
             />
           </div>
           <div className="grid gap-1 pt-3 pb-3">
-            <Label  htmlFor="confirm-password">
-              Xác nhận mật khẩu
-            </Label>
+            <Label htmlFor="confirm-password">Xác nhận mật khẩu</Label>
             <Input
               id="confirm-password"
               placeholder="confirm password..."
@@ -96,7 +87,7 @@ export function UserAuthForm({ className, ...props }) {
               onChange={(e) => setConfirmPassword(e.target.value)}
             />
           </div>
-          <Button onClick = {onSubmit} type= "submit" disabled={isLoading}>
+          <Button onClick={onSubmit} type="submit" disabled={isLoading}>
             {isLoading && (
               <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
@@ -114,9 +105,14 @@ export function UserAuthForm({ className, ...props }) {
           </span>
         </div>
       </div>
-      <Button onClick= {() => navigate('/login')} variant="outline" type="button" disabled={isLoading}>
+      <Button
+        onClick={() => navigate("/login")}
+        variant="outline"
+        type="button"
+        disabled={isLoading}
+      >
         Đăng nhập
       </Button>
     </div>
-  )
+  );
 }
