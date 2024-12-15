@@ -7,6 +7,8 @@ import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import NodeDashboard from './pages/NodeDashboard'
 import About from './pages/About'
+import Chatbot from './pages/Chatbot'
+import Profile from './pages/Profile'
 
 
 function App() {
@@ -16,10 +18,11 @@ function App() {
         <Route path="/" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/node" element={<NodeDashboard />} />
         <Route path="/about" element={<About />} />
+        <Route path="/chatbot" element={<Chatbot />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
   )

@@ -145,7 +145,7 @@ const DashboardTable = () => {
     return (
         <Layout>
             <div className="relative w-full h-32 bg-cover bg-center rounded-lg" style={{ backgroundImage: "url(../../public/dashboard.jpg)" }}>
-                <div className="absolute top-4 left-4">
+                <div className="absolute top-4 left-4 justify-end">
                     <h1 className="text-white text-2xl font-bold">DASHBOARD</h1>
                 </div>
             </div>
@@ -153,7 +153,7 @@ const DashboardTable = () => {
             <SelectStation />
 
             <div className="space-y-4">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between p-5">
                     <div className="flex items-center space-x-2">
                         <span
                             style={{ color: "#4C9F4C" }}
@@ -240,7 +240,7 @@ const DashboardTable = () => {
                         ))}
                     </tbody>
                 </table>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between p-5">
                     <div className="text-sm text-gray-500">
                         Hiển thị {startIndex + 1} đến {Math.min(endIndex, data.length)} của {data.length} mục
                     </div>

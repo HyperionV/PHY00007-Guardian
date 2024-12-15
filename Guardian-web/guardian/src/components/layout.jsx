@@ -13,12 +13,11 @@ export function Layout({ children }) {
               <div className="flex items-center gap-2 hover:cursor-pointer">
                 <img src="../../public/icon.png" alt="Logo" className="h-12 w-12" />
                 <div className="flex flex-col leading-tight">
-                  <span className="text-2xl font-bold">HỆ THỐNG ỨNG DỤNG IoT</span>
-                  <span className="text-lg">HỖ TRỢ GIÁM SÁT VÀ BẢO VỆ RỪNG</span>
+                  <span className="text-xl font-bold">HỆ THỐNG ỨNG DỤNG IoT</span>
+                  <span className="text-xl font-bold">HỖ TRỢ GIÁM SÁT VÀ BẢO VỆ RỪNG</span>
                 </div>
               </div>
               <nav className="flex gap-7 ml-6">
-                <Link to="/home" className="text-white/90 text-lg font-semibold hover:text-white">TRANG CHỦ</Link>
                 <Link to="/dashboard" className="text-white/90 text-lg font-semibold">DASHBOARD</Link>
                 <Link to="/chatbot" className="text-white/90 text-lg font-semibold hover:text-white">CHATBOT</Link>
                 <Link to="/profile" className="text-white/90 text-lg font-semibold hover:text-white">HỒ SƠ</Link>
@@ -47,10 +46,6 @@ export function Layout({ children }) {
             <p>Trường Đại Học Khoa Học Tự Nhiên, Thành phố Hồ Chí Minh</p>
             <p>Liên hệ: 0123456789</p>
             <p>Email: abc@gmail.com</p>
-          </div>
-          <Separator className="my-6" />
-          <div className="mt-4 text-xs text-white/80">
-            Copyright ©2024, Khoa Công Nghệ Thông Tin - Trường Đại Học Khoa Học Tự Nhiên, Thành phố Hồ Chí Minh
           </div>
         </div>
       </footer>
