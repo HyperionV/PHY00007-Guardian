@@ -1,30 +1,97 @@
-import { Layout } from "@/src/components/layout"
-import { Map } from "@/src/components/map"
-import { SensorGauge } from "@/src/components/sensor-gauge"
-import { AverageReadingsChart } from "@/src/components/charts"
-import { Droplets, Thermometer, Gauge, Wind, Cloud, Activity } from 'lucide-react'
-import * as React from 'react'
+import { Layout } from "@/src/components/layout";
+import { Map } from "@/src/components/map";
+import { SensorGauge } from "@/src/components/sensor-gauge";
+import { AverageReadingsChart } from "@/src/components/charts";
+import {
+  Droplets,
+  Thermometer,
+  Gauge,
+  Wind,
+  Cloud,
+  Activity,
+} from "lucide-react";
+import { useState, useEffect } from "react";
+import { db } from "@/src/firebase-config";
+import { ref, get } from "firebase/database";
+import { useParams } from "react-router-dom";
 
 export default function NodeDashboard() {
-  const [selectedYear, setSelectedYear] = React.useState(2024)
+  const [selectedYear, setSelectedYear] = useState(2024);
+  const [nodes, setNodes] = useState([]);
+  const [data, setData] = useState([]);
+  const [selectedNode, setSelectedNode] = useState("node_1");
+  const { nodeId } = useParams();
 
-  const fetchStationData = async () => {
-    const response = await fetch(`https://api.example.com/stations/${selectedYear}`)
-    const data = await response.json()
-    console.log(data)
-  }
+  // Fetch available nodes
+  useEffect(() => {
+    const fetchNodes = async () => {
+      const nodesRef = ref(db, "nodes");
+      const snapshot = await get(nodesRef);
+      if (snapshot.exists()) {
+        const nodeKeys = Object.keys(snapshot.val());
+        setNodes(nodeKeys);
+        setSelectedNode(nodeId || nodeKeys[0]);
+      }
+    };
 
-//   React.useEffect(() => {
-//     fetchStationData()
-//   }, [selectedYear])
+    fetchNodes();
+  }, [nodeId]);
 
-  const data = {
-    stationID: 1,
-    nodeID: 1,
-    status: "Nguy hiểm",
-    statusDescription: "Có nguy cơ cháy rừng",
-    position: "Vườn Quốc Gia Cát Tiên"
-  }
+  // Fetch data for selected node
+  useEffect(() => {
+    const fetchData = async () => {
+      const nodeRef = ref(db, "nodes/" + selectedNode + "/data");
+      const snapshot = await get(nodeRef);
+      if (snapshot.exists()) {
+        const fetchedData = Object.values(snapshot.val());
+        fetchedData.sort(
+          (a, b) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+        setData(fetchedData);
+      }
+    };
+
+    if (selectedNode) {
+      fetchData();
+    }
+  }, [selectedNode]);
+
+  const calculateRiskLevel = (reading) => {
+    if (!reading)
+      return { status: "Unknown", description: "No data available" };
+
+    let dangerScore = 0;
+
+    const temperature = parseFloat(reading.temperature);
+    const airMoisture = parseFloat(reading.air_moisture);
+    const distance = parseFloat(reading.distance);
+    const lightIntensity = parseFloat(reading.light_intensity);
+    const movingMagnitude = parseFloat(reading.moving_magnitude);
+    const soilMoisture = parseFloat(reading.soil_moisture);
+    const coConcentration = parseFloat(reading.co_concentration);
+
+    if (temperature > 35 || temperature < 15) dangerScore += 2;
+    if (airMoisture < 30 || airMoisture > 80) dangerScore += 2;
+    if (distance < 50) dangerScore += 2;
+    if (lightIntensity < 10) dangerScore += 1;
+    if (movingMagnitude > 2) dangerScore += 2;
+    if (soilMoisture < 20 || soilMoisture > 80) dangerScore += 2;
+    if (coConcentration > 5) dangerScore += 2;
+
+    if (dangerScore >= 6) {
+      return { status: "High Risk", description: "Forest fire risk detected" };
+    } else if (dangerScore >= 3) {
+      return {
+        status: "Medium Risk",
+        description: "Potential risk conditions",
+      };
+    }
+    return { status: "Low Risk", description: "Normal conditions" };
+  };
+
+  const latestReading = data[0] || null;
+  const riskLevel = calculateRiskLevel(latestReading);
 
   return (
     <Layout>
@@ -32,71 +99,84 @@ export default function NodeDashboard() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold">
-                {data.position}: Trạm {data.stationID} - Node {data.nodeID}
+              Cat Tien National Park: Node {selectedNode}
             </h1>
-            <div className="text-red-500">Trạng thái: {data.status}</div>
-            <div className="text-sm text-red-500">{data.statusDescription}</div>
+            <div
+              className={`
+              ${
+                riskLevel.status === "High Risk"
+                  ? "text-red-500"
+                  : riskLevel.status === "Medium Risk"
+                  ? "text-yellow-500"
+                  : "text-green-500"
+              }
+            `}
+            >
+              Status: {riskLevel.status}
+            </div>
+            <div className="text-sm">{riskLevel.description}</div>
           </div>
-          <select  
+          <select
             className="border rounded p-2"
             value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
-            >
+            onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+          >
             <option>2024</option>
             <option>2023</option>
             <option>2022</option>
           </select>
         </div>
 
-        <div >
-          <Map data={data}/>
-          <AverageReadingsChart />
+        <div>
+          <Map data={latestReading} />
+          <AverageReadingsChart data={data} />
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           <SensorGauge
-            value={28.236}
+            value={latestReading?.temperature}
             unit="°C"
-            label="Nhiệt độ"
+            label="Temperature"
             icon={<Thermometer className="h-6 w-6 text-blue-500" />}
             max={50}
           />
           <SensorGauge
-            value={0.49}
+            value={latestReading?.air_moisture}
             unit="%"
-            label="Độ ẩm không khí"
+            label="Air Moisture"
             icon={<Droplets className="h-6 w-6 text-blue-500" />}
+            max={100}
           />
           <SensorGauge
-            value={41}
+            value={latestReading?.soil_moisture}
             unit="%"
-            label="Độ ẩm đất"
+            label="Soil Moisture"
             icon={<Gauge className="h-6 w-6 text-brown-500" />}
+            max={100}
           />
           <SensorGauge
-            value={93.02}
+            value={latestReading?.co_concentration}
             unit="PPM"
-            label="Nồng độ khí C0"
+            label="CO Concentration"
             icon={<Wind className="h-6 w-6 text-yellow-500" />}
-            max={200}
+            max={10}
           />
           <SensorGauge
-            value={1000}
-            unit="cd/m2"
-            label="Cường độ ánh sáng"
+            value={latestReading?.light_intensity}
+            unit="cd/m²"
+            label="Light Intensity"
             icon={<Cloud className="h-6 w-6 text-blue-500" />}
-            max={2000}
+            max={100}
           />
           <SensorGauge
-            value={6}
+            value={latestReading?.moving_magnitude}
             unit="mm/s"
-            label="Rung chấn"
+            label="Movement"
             icon={<Activity className="h-6 w-6 text-gray-500" />}
-            max={50}
+            max={10}
           />
         </div>
       </div>
     </Layout>
-  )
+  );
 }
-
