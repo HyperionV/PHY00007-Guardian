@@ -15,6 +15,7 @@ export const ChatInput= ({ onSend }) => {
     if (input.trim()) {
       onSend(input)
       setInput('')
+      window.scrollTo(0, document.body.scrollHeight)
     }
   }
 
@@ -23,6 +24,7 @@ export const ChatInput= ({ onSend }) => {
       e.preventDefault(input);
       onSend(input);
       setInput('')
+      window.scrollTo(0, document.body.scrollHeight);
     }
   };
 

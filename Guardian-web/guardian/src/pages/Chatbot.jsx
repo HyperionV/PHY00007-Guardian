@@ -1,15 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { useState } from 'react'
 import { Chat } from '@/src/components/chat'
 import { ChatInputArea } from '@/src/components/chat-input-area'
 import { Layout } from '@/src/components/layout'
 
-const WELCOME_MESSAGE= {
-    role: 'system',
-    content: 'Chào mừng bạn đến với Hệ thống Ứng dụng IoT Hỗ trợ Giám sát và Bảo vệ Rừng! Tôi có thể giúp gì cho bạn hôm nay?'
-  }
+
+
+const WELCOME_MESSAGE = {
+  role: 'system',
+  content: 'Chào mừng bạn đến với Hệ thống Ứng dụng IoT Hỗ trợ Giám sát và Bảo vệ Rừng! Tôi có thể giúp gì cho bạn hôm nay?'
+}
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState([WELCOME_MESSAGE])
@@ -39,8 +40,8 @@ export default function ChatInterface() {
       //   throw new Error('Failed to get response from the model')
       // }
 
-      const data = "Hi, I'm the assistant. How can I help you today?"
-      const assistantMessage = {
+      const data = "Chào bạn! Tôi có thể giúp gì cho bạn hôm nay?"
+      const assistantMessage= {
         role: 'assistant',
         content: data
       }
@@ -60,14 +61,14 @@ export default function ChatInterface() {
 
   return (
     <Layout>
-      <div className="flex flex-col h-[calc(100vh-5rem)] bg-gray-100">
-        <ScrollArea className="flex-1 px-4 py-4">
+      <div className="flex flex-col h-[calc(80vh-5rem)] bg-gray-100">
+        <div className="flex-1 overflow-hidden">
           <Chat
             messages={messages}
             loading={loading}
             onReset={handleReset}
           />
-        </ScrollArea>
+        </div>
         <ChatInputArea onSend={handleSend} />
       </div>
     </Layout>

@@ -5,7 +5,7 @@ import { User, Bot } from 'lucide-react'
 export const ChatMessage= ({ message }) => {
   if (message.role === 'system') {
     return (
-      <div className="flex justify-center">
+      <div className="flex justify-center pt-5">
         <div className="max-w-[80%] p-2 rounded-lg bg-blue-100 text-blue-800">
           {message.content}
         </div>
