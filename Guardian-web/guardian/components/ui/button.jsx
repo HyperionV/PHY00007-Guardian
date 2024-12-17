@@ -34,6 +34,49 @@ const buttonVariants = cva(
   }
 )
 
+const ButtonWarning = ({
+  children,
+  variant = "primary",
+  size = "default",
+  className,
+  ...props
+}) => {
+  const baseStyles =
+    "inline-flex items-center justify-center border font-medium rounded focus:outline-none focus:ring-2 focus:ring-offset-2";
+
+  const variantStyles = {
+    primary:
+      "bg-blue-600 text-white border-transparent hover:bg-blue-700 focus:ring-blue-500",
+    outline:
+      "bg-white text-gray-700 border-gray-300 hover:bg-gray-50 focus:ring-blue-500",
+    success:
+      "bg-green-600 text-white border-transparent hover:bg-green-700 focus:ring-green-500",
+    secondary:
+      "bg-gray-300 text-gray-800 border-transparent hover:bg-gray-400 focus:ring-gray-500",
+    danger:
+      "bg-red-600 text-white border-transparent hover:bg-red-700 focus:ring-red-500",
+  };
+
+  const sizeStyles = {
+    default: "px-4 py-2",
+    icon: "p-2",
+  };
+
+  return (
+    <button
+      className={cn(
+        baseStyles,
+        variantStyles[variant],
+        sizeStyles[size],
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
 const Button = React.forwardRef(({ className, variant, size, asChild = false, ...props }, ref) => {
   const Comp = asChild ? Slot : "button"
   return (
@@ -45,4 +88,4 @@ const Button = React.forwardRef(({ className, variant, size, asChild = false, ..
 })
 Button.displayName = "Button"
 
-export { Button, buttonVariants }
+export { Button, buttonVariants, ButtonWarning }
