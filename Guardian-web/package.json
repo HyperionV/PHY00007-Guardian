@@ -1,0 +1,11 @@
+{
+    "dependencies": {
+        "concurrently": "^9.1.0",
+        "flask": "^0.2.10"
+    },
+    "scripts": {
+        "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\"",
+        "start:frontend": "cd guardian && npm run dev",
+        "start:backend": "cd server && python main.py"
+    }
+}

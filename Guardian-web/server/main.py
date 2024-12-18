@@ -14,6 +14,8 @@ from llama_index.core import Document
 from llama_index.core import VectorStoreIndex
 from llama_index.core.node_parser import SentenceWindowNodeParser
 from llama_index.core.postprocessor import MetadataReplacementPostProcessor
+from smtp_email_sender import send_email_async
+import asyncio
 
 app = Flask(__name__)
 CORS(app)
@@ -36,6 +38,63 @@ Settings.embeddings = embed
 
 index = None
 query_engine = None
+
+def get_latest_data(sensor_data):
+    newest_data = None
+    print(sensor_data)
+    for timestamp, data in sensor_data.items():
+        if newest_data is None or data['timestamp'] > newest_data['timestamp']:
+            newest_data = data
+    return newest_data
+
+async def notify_latest_data_danger_level(sensor_data):
+    data = get_latest_data(sensor_data)
+    temperature = data['temperature']
+    airMoisture = data['air_moisture']
+    distance = data['distance']
+    lightIntensity = data['light_intensity']
+    movingMagnitude = data['moving_magnitude']
+    soilMoisture = data['soil_moisture']
+    coConcentration = data['co_concentration']
+    dangerScore = 0
+    dangerLevel = "LOW"
+    if (temperature > 35 or temperature < 15):
+        dangerScore += 2
+    if (airMoisture < 30 or airMoisture > 80):
+        dangerScore += 2
+    if (distance < 50):
+        dangerScore += 2
+    if (lightIntensity < 10):
+        dangerScore += 1
+    if (movingMagnitude > 2):
+        dangerScore += 2
+    if (soilMoisture < 20 or soilMoisture > 80):
+        dangerScore += 2
+    if (coConcentration > 5):
+        dangerScore += 2
+
+    if (dangerScore >= 6):
+        dangerLevel= "HIGH"
+    if (dangerScore >= 3):
+        dangerLevel= "AVERAGE"
+    print(dangerLevel)
+    
+    if (dangerLevel == "HIGH" or dangerLevel == "AVERAGE"):
+        info = f"""
+        Timestamp: {data['timestamp']}<br>
+        Temperature: {temperature}°F<br>
+        Air Moisture: {airMoisture}%<br>
+        Distance: {distance} cm<br>
+        Light Intensity: {lightIntensity} lux<br>
+        Moving Magnitude: {movingMagnitude}<br>
+        Soil Moisture: {soilMoisture}%<br>
+        CO Concentration: {coConcentration} ppm<br>
+        Danger Level: <strong>{dangerLevel}</strong><br>
+        """
+
+        receiver = "johnysiu2004@gmail.com"
+        await send_email_async(receiver, info)
+    return
 
 def initialize_rag():
     global index, query_engine
@@ -65,10 +124,12 @@ def initialize_rag():
                 }
             )
             formatted_documents.append(doc)
+
         return formatted_documents
 
     sensor_data = fetch_sensor_data("ph5H1bCl3nb2rI7FU1Ac")
     documents = format_data(sensor_data)
+    asyncio.create_task(notify_latest_data_danger_level(sensor_data))
     
     node_parser = SentenceWindowNodeParser.from_defaults(
         window_size=3,
