@@ -15,6 +15,7 @@ from llama_index.core import VectorStoreIndex
 from llama_index.core.node_parser import SentenceWindowNodeParser
 from llama_index.core.postprocessor import MetadataReplacementPostProcessor
 from smtp_email_sender import send_email_async
+from push_notification import send_push_notification
 import asyncio
 
 app = Flask(__name__)
@@ -94,6 +95,9 @@ async def notify_latest_data_danger_level(sensor_data):
 
         receiver = "johnysiu2004@gmail.com"
         await send_email_async(receiver, info)
+        
+        message = f"Node ph5H1bCl3nb2rI7FU1Ac is in danger! Data: {data}, Danger Level: {dangerLevel}, Timestamp: {data['timestamp']}"
+        await send_push_notification("qG40UPrs3HIjpnEGCCFw", message)
     return
 
 def initialize_rag():
